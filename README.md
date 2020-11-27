@@ -8,6 +8,6 @@ If not, you should check it out and probably start using it.
 
 Pollyanna is similar, in that it draws data from GitHub GraphQL API and ZenHub REST API,
 but different in that it documents **what the plan says is going to happen**.
-See, similar buy different.
+See, similar but different.
 
 Maybe you need both?
