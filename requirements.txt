@@ -1,0 +1,6 @@
+jupyter
+requests
+jinja2
+pytest
+pytest-mock
+# now run the post_pip_install.sh
