@@ -11,8 +11,25 @@ If not, you should check it out and probably start using it.
 
 Pollyanna is similar, in that it draws data from GitHub GraphQL API and ZenHub REST API,
 but different in that it documents **what the plan says is going to happen**.
+Kanned Banannas answers the question "between these dates, what happened?".
+Pollyanna answers the question "based on everything we know up until now,
+what are we saying we are going to do?".
 
 See, similar but different. Maybe you need both?
+
+Pollyanna generats a diffable output.
+This means that when the tickets change,
+and you keep clobbering you old planning documents with new ones,
+the only difference will be the things that changed.
+So you can put your generated documents under version control
+and use `git diff` to see how the plan changed over time.
+This is because the the plan is an important artefact.
+It needs to be distributed among tickets so that you can do it,
+but it also needs to be consolidated in one place
+so that you can present it to people who need to know what the plan is
+(more than just the people who need to do it).
+You need to be able to discuss how the plan has changed,
+why the plan changed, and when.
 
 ## Install
 
