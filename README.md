@@ -17,7 +17,7 @@ what are we saying we are going to do?".
 
 See, similar but different. Maybe you need both?
 
-Pollyanna generats a diffable output.
+Pollyanna generates a diffable output.
 This means that when the tickets change,
 and you keep clobbering you old planning documents with new ones,
 the only difference will be the things that changed.
