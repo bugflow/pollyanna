@@ -61,3 +61,23 @@ But hopefully with more tests being run :)
 Then copy `local_settings.py.sample` to `local_settings.py` and edit it.
 
 Then do `python run.py` or, if you are lucky just `run.py` should work for you.
+
+## How it (is going to) works
+
+run.py instantiates a `usecases.GenerateThePlan` instance,
+after it instanting it with some handy repos.
+
+When it runs, the `repositories.ZenHubRestRepo` and `repositories.GitHubGraphQPRepo` instances
+talk to the online services and get the domain objects we need.
+These repos use a `repositories.FSCache` class (File System Cache)
+to avoid hammering the backing services.
+
+When executed, the usecase calls the GitHub and ZenHub repos
+to form a linked-up object graph of domain objects.
+This graph is passed to a `repositories.RSTPlanRepo` instance,
+which uses jinja2 templates to create
+a tree of ReStructured Text (rst) documentation.
+
+This generated rst is the "diffable" product,
+which may be kept in a version control system.
+It uses ReStructured Text *directives* to generate diagrams and artefacts.
