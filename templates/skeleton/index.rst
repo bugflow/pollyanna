@@ -5,5 +5,6 @@ FIXME: Use project name
    :maxdepth: 2
    :caption: Contents:
 
+   demo
    milestones
    tickets

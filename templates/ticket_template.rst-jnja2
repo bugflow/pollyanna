@@ -1,7 +1,13 @@
 .. ticket_{{ ticket.issue_id }} <-- make named anchor
 
-Ticket: {{ticket.title}}
-========{% for x in ticket.title %}={% endfor %}
+{{ticket.title}}
+{% for x in ticket.title %}={% endfor %}
 
-This ticket blah blah blah
+.. ticket:: {{ticket.title}}
+   :id: {{ticket.code}}
+   :status: {{ticket.status}}
+   :tags: {{ticket.taglist}}
+   :collapse: false
+
+   {{ticket.description}}
 

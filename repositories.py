@@ -282,14 +282,6 @@ class GHGraphQLRepo:
             self._epics.append(epic)
     
     def _process_issue(self, i):
-        num = i["number"]
-        pub_at = i["publishedAt"]
-        title = i["title"]
-        state = i["state"]
-
-        m_data =  i["milestone"]
-        milestone = self._process_milestone(m_data)
-
         labels = []
         for l_data in i["labels"]["nodes"]:
             labels.append(self._process_label(l_data))
@@ -297,19 +289,19 @@ class GHGraphQLRepo:
         # ensure this issue is in the graph
         found = False
         for issue in self._issues:
-            if issue.issue_number == num:
+            if issue.issue_id == i["id"]:
                 found = issue
         if not found:
             issue = Issue(
-                issue_number=num,
-                published_at=pub_at,
-                title=title,
-                state=state,
-                milestone=milestone,
+                issue_id=i["id"],
+                issue_number=i["number"],
+                published_at=i["publishedAt"],
+                title=i["title"],
+                state=i["state"],
+                milestone=self._process_milestone(i["milestone"]),
                 labels=labels)
             self._issues.append(issue)
             found = issue
-
         # ensure this issue has it's labels
         for label in labels:
             if label not in found.labels:
@@ -387,7 +379,8 @@ class RSTPlanRepo:
             "conf.py",
             "index.rst",
             "tickets.rst",
-            "milestones.rst"
+            "milestones.rst",
+            "demo.rst"
         )
         for bone in bones:
             src = f"{self._template_dir}/skeleton/{bone}"

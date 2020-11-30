@@ -7,5 +7,6 @@ python-slugify
 
 sphinx
 sphinxcontrib-needs
+sphinxcontrib-plantuml
 
 # now run the post_pip_install.sh

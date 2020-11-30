@@ -39,8 +39,6 @@ class GenerateIGLPlanUseCase:
                     if i.issue_number == issue_num:
                         i._zenhub_epic = e
 
-                    
-
         # iterate over objectives and ensure they list their goals
         # iterate over goals and ensure the list their epics
         # iterate over epics and ensure the list their issues
