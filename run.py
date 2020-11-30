@@ -13,7 +13,7 @@ from repositories import (
     RSTPlanRepo,
     ZenHubRestRepo
 )
-from usecases import GenerateIGLPlanUseCase
+from usecases import GenerateThePlanUseCase
 
 
 # TODO: maybe make this a click CLI?
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     )
 
     print("INSTANTIATING UC")  # DEBUG
-    uc = GenerateIGLPlanUseCase(
+    uc = GenerateThePlanUseCase(
         github_repo=gh_repo,
         zenhub_repo=zh_repo,
         output_repo=writer_repo

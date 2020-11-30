@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-class GenerateIGLPlanUseCase:
+class GenerateThePlanUseCase:
     def __init__(self, github_repo=None, zenhub_repo=None, output_repo=None):
         self._github_repo = github_repo
         self._zenhub_repo = zenhub_repo
@@ -36,8 +36,6 @@ class GenerateIGLPlanUseCase:
                 for i in issues:
                     if i.issue_number == issue_num:
                         i._zenhub_epic = e
-
-                    
 
         # iterate over objectives and ensure they list their goals
         # iterate over goals and ensure the list their epics

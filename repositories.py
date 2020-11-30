@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import asyncio
-from datetime import datetime
+from datetime import (
+    datetime,
+    timedelta
+)
 from domain import (
     Milestone,
     Label,
@@ -12,6 +15,7 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from jinja2 import Template
 import json
+import os.path
 import requests
 from requests.structures import CaseInsensitiveDict
 
@@ -19,6 +23,83 @@ from requests.structures import CaseInsensitiveDict
 class FSCache:
     def __init__(self, cache_dir=None):
         self._cache_dir = cache_dir
+
+    def repo_exists(self, reponame):
+        return self._dir_exists(self._repo_path(reponame))
+
+    def issue_exists(self, reponame, issue_number):
+        if not self.repo_exists(reponame):
+            return False
+        issue_path = self._issue_path(reponame, issue_number)
+        if not self._file_exists(issue_path):
+            return False
+        return True
+
+    def _dir_exists(self, pathname):
+        if os.path.exists(pathname) and os.path.isdir(pathname):
+            return True
+        return False
+
+    def _file_exists(self, pathname):
+        if os.path.exists(pathname) and os.path.isfile(pathname):
+            return True
+        return False
+
+    def _repo_path(self, reponame):
+        prefix = os.path.join(self._cache_dir, 'repositories')
+        return os.path.join(prefix, reponame)
+
+    def _zenhub_repo_path(self, repo_id):
+        prefix = os.path.join(self._cache_dir, 'zenhub_repositories')
+        return os.path.join(prefix, repo_id)
+
+    def _issue_path(self, reponame, issue_number):
+        repo_path = self._repo_path(reponame)
+        prefix = os.path.join(repo_path, 'issues')
+        return os.path.join(prefix, f"{prefix}.json")
+
+    def _epic_list_path(self, repo_id):
+        repo_path = self._zenhub_repo_path(repo_id)
+        return os.path.join(repo_path, 'epic_list.json')
+
+    def _file_date(self, path):
+        return datetime.fromtimestamp(
+            os.path.getmtime(path)
+        )
+        
+    def epic_list_stale(self, repo_id, threshold_seconds):
+        path = self._epic_list_path(repo_id)
+        if not self._file_exists(path):
+            return True
+        last_touched = self._file_date(path)
+        now = self._now()
+        if now - last_touched >= timedelta(seconds=threshold_seconds):
+            return True
+        return False
+
+    def _now(self):
+        # wrapper because mock can't clovver built-ins
+        return datetime.now()
+
+    def epic_list(self, repo_id):
+        path = self._epic_list_path(repo_id)
+        if not self._file_exists(path):
+            return None
+        return self._read_json(path)
+
+    def _read_json(self, path):
+        with open(path, "r") as fp:
+            return json.loads(fp.read())
+
+    def update_epic_list(self, repo_id, epic):
+        path = self._epic_list_path(repo_id)
+        return self._write_json(path, epic)
+
+    def _write_json(self, path, content):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as fp:
+            fp.write(json.dumps(content))
+        return fp.close()
 
 
 class ZenHubRestRepo:
@@ -28,6 +109,7 @@ class ZenHubRestRepo:
             api_token=None,
             cache_dir=None
     ):
+        self._cache = FSCache(cache_dir=".pollyanna_cache")  # TODO: configurable
         # config values
         self._repo_id = repo_id
         self._api_token = api_token
@@ -49,14 +131,21 @@ class ZenHubRestRepo:
         self._get_and_process_epics()
 
     def _get_fresh_epic_list(self):
-        response = requests.get(
-            f"{self._base_url}",
-            headers=self._headers
-        )
-        if response.ok:
-            return response.json()["epic_issues"]
+        if self._cache.epic_list_stale(self._repo_id, self._CACHE_THRESHOLD):
+            response = requests.get(
+                f"{self._base_url}",
+                headers=self._headers
+            )
+            if response.ok:
+                epics = response.json()["epic_issues"]
+                # note, this may be an empty list
+                self._cache.update_epic_list(self._repo_id, epics)
+                return epics
+            else:
+                raise Exception(f"HTTP Response from ZenHub: {response.status_code}")
         else:
-            raise Exception(f"HTTP Response from ZenHub: {response.status_code}")
+            return self._cache.epic_list(self._repo_id)
+
 
     def _get_and_process_epics(self):
         epics = []
@@ -116,7 +205,16 @@ class ZenHubRestRepo:
         )
 
     def _local_epic_age(self, issue_number=None, repo_name=None):
-        print(f"_local_epic_age called with issue_number={issue_number} and repo_name={repo_name}")
+        if not issue_number:
+            return None
+        if not repo_name:
+            return None
+        if not self._cache._issue_exists(repo_name, issue_number):
+            return None
+        # TODO: refactor to use FSCache.issue_stale(repo_name, issue_number)
+        # we probably don't need this method at all
+        #
+        #
         # return age of local copy in seconds
         # or None if not in local repo
         #

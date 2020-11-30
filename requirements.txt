@@ -3,4 +3,5 @@ requests
 jinja2
 pytest
 pytest-mock
+pytest-cov
 # now run the post_pip_install.sh
