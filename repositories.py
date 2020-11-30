@@ -12,6 +12,7 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from jinja2 import Template
 import json
+import os
 import requests
 from requests.structures import CaseInsensitiveDict
 
@@ -373,33 +374,45 @@ class RSTPlanRepo:
         template_dir=None,
         output_dir=None
     ):
+        # TODO: decide how to handle null config
+        # strong types? error if None? ?? 
         self._template_dir = template_dir
         self._output_dir = output_dir
 
-    def milestone_report(self, milestone):
+    def milestone_report(self, counter, milestone):
         template = Template(
             open(
-                "templates/milestone_template.rst-jnja2",
+                f"{self._template_dir}/milestone_template.rst-jnja2",
                 "r"
             ).read()
         )
+        path = f"{self._output_dir}/milestones/{counter}_{milestone.slug_id}.rst"
         # FIXME: write to file
-        print(
+        self._write_file(
+            path,
             template.render(
                 milestone=milestone
             )
         )
 
-    def ticket_report(self, ticket):
+    def ticket_report(self, issue):
         template = Template(
             open(
-                "templates/ticket_template.rst-jnja2",
+                f"{self._template_dir}/ticket_template.rst-jnja2",
                 "r"
             ).read()
         )
+        path = f"{self._output_dir}/tickets/FIXME-REPO-ID/{issue.slug_id}.rst"
         # FIXME: write to file
-        print(
+        self._write_file(
+            path,
             template.render(
-                ticket=ticket
+                ticket=issue
             )
         )
+
+    def _write_file(self, path, text):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        fp = open(path, "w")
+        fp.write(text)
+        fp.close()

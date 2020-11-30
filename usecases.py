@@ -29,6 +29,7 @@ class GenerateIGLPlanUseCase:
         # add the ZH data to the GH issue
         issues = self._github_repo.issues
         epics = self._zenhub_repo.epics
+        # TODO: sort milestones by chronolical order
         milestones = self._github_repo.milestones
 
         for e in epics:
@@ -45,9 +46,10 @@ class GenerateIGLPlanUseCase:
         # iterate over epics and ensure the list their issues
         # repeat in the other direction...
         # generate the report
+        counter = 0
         for m in milestones:
-            self._output_repo.milestone_report(m)
+            self._output_repo.milestone_report(counter, m)
+            counter += 1
         for i in issues:
             self._output_repo.ticket_report(i)
         return "Done"
-        
