@@ -1,4 +1,5 @@
 .. ticket_{{ ticket.issue_id }} <-- make named anchor
+
 Ticket: {{ticket.title}}
 ========{% for x in ticket.title %}={% endfor %}
 
