@@ -4,7 +4,7 @@ github_repo_name = "pollyanna"
 zenhub_repo_id = "get-this-number-from-zenhub"
 zenhub_cache_dir = "./zenhub_cache/"
 report_template_dir = "./templates"
-output_dir = "./output"
+output_dir = "./_output"
 
 # FIXME: get these from envars
 github_api_token = "put-your-api-token-here-about-40-chars"
