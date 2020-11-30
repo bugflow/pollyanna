@@ -1,6 +1,6 @@
 # pollyanna
 
-report the plan as it really is
+The Plan, as it really is.
 
 You may be familiar with the famous and most excellent "Kanned Bananas",
 which draws data from GitHub (using it's GraphQL API)
@@ -17,17 +17,40 @@ what are we saying we are going to do?".
 
 See, similar but different. Maybe you need both?
 
+
+## Diffable Output
+
 Pollyanna generates a diffable output.
+
 This means that when the tickets change,
 and you keep clobbering you old planning documents with new ones,
 the only difference will be the things that changed.
 So you can put your generated documents under version control
 and use `git diff` to see how the plan changed over time.
-This is because the the plan is an important artefact.
-It needs to be distributed among tickets so that you can do it,
+
+This means that each change (commit) is readable,
+it has a high signal to noise ratio.
+It should not require a big cognative investment
+to understand changes by looking at them.
+
+This is because the the plan is an important artefact,
+and changes to the plan are important events.
+
+## Consolodated plan
+
+The plan needs to be distributed among tickets
+so that you can do it,
 but it also needs to be consolidated in one place
-so that you can present it to people who need to know what the plan is
-(more than just the people who need to do it).
+so that you can present it to people
+who need to know what the plan is.
+
+This means more than just the people
+who need to do what is in the plan.
+They are generally happy with tickets at home,
+"in the context of doing".
+But other stakeholders need to work down to the detail
+from their perspective.
+
 You need to be able to discuss how the plan has changed,
 why the plan changed, and when.
 
