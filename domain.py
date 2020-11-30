@@ -2,6 +2,7 @@
 """
 Generate the current project plan (in RST) from GitHub tickets.
 """
+from slugify import slugify
 import re
 
 
@@ -22,6 +23,10 @@ class Milestone:
     @property
     def count_objectives(self):
         return len(self.objective_goals)
+
+    @property
+    def slug_id(self):
+        return slugify(self.milestone_id)
 
 
 class Label:
@@ -52,6 +57,10 @@ class Issue:
         self.milestone = milestone
         self.labels = labels
         self._goal = goal
+
+    @property
+    def slug_id(self):
+        return slugify(f"{self.issue_number}")
 
     @property
     def is_goal(self):

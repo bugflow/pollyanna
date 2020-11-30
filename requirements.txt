@@ -1,6 +1,11 @@
-jupyter
-requests
+# jupyter
+# requests
 jinja2
 pytest
 pytest-mock
+python-slugify
+
+sphinx
+sphinxcontrib-needs
+
 # now run the post_pip_install.sh
