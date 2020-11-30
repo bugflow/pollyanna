@@ -110,3 +110,7 @@ such as https://sphinxcontrib-needs.readthedocs.io/.
 So the generated/version-controlled stuff is hightly diffable,
 but the rendered/published/distributed stuff
 is hightl consumable as-is (rather than as-a-delta).
+
+Maybe even one day, there could be a dynamic (render-time)
+appendix containing an introspected change-log.
+e.g. using Ned Beltcher's Cog to query the git history.
