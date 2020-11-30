@@ -22,6 +22,10 @@ class FSCache:
 
 
 class ZenHubRestRepo:
+    @property
+    def epics(self):
+        return self._epics
+
     def __init__(
             self,
             repo_id=None,
@@ -347,6 +351,10 @@ class GHGraphQLRepo:
     def milestones(self):
         return self._milestones
 
+    @property
+    def issues(self):
+        return self._issues
+
     def _get_raw_data(self):
         # TODO: make graphql query
         # TODO: iterate/combine over pagenated results
@@ -375,13 +383,23 @@ class RSTPlanRepo:
                 "r"
             ).read()
         )
+        # FIXME: write to file
         print(
             template.render(
                 milestone=milestone
             )
         )
-        #print(milestone.milestone_id)
-        #print(milestone.title)
-        #print(milestone.objectives)
-        #print(milestone.issues)
 
+    def ticket_report(self, ticket):
+        template = Template(
+            open(
+                "templates/ticket_template.rst-jnja2",
+                "r"
+            ).read()
+        )
+        # FIXME: write to file
+        print(
+            template.render(
+                ticket=ticket
+            )
+        )
