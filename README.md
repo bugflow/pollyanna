@@ -104,3 +104,9 @@ a tree of ReStructured Text (rst) documentation.
 This generated rst is the "diffable" product,
 which may be kept in a version control system.
 It uses ReStructured Text *directives* to generate diagrams and artefacts.
+
+Those generated RST files will make use of cool stuff at render-time,
+such as https://sphinxcontrib-needs.readthedocs.io/.
+So the generated/version-controlled stuff is hightly diffable,
+but the rendered/published/distributed stuff
+is hightl consumable as-is (rather than as-a-delta).
