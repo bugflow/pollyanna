@@ -46,6 +46,7 @@ class GenerateIGLPlanUseCase:
         # iterate over epics and ensure the list their issues
         # repeat in the other direction...
         # generate the report
+        self._output_repo.skeleton()
         counter = 0
         for m in milestones:
             self._output_repo.milestone_report(counter, m)

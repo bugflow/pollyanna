@@ -13,6 +13,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 from jinja2 import Template
 import json
 import os
+import os.path
+import shutil
 import requests
 from requests.structures import CaseInsensitiveDict
 
@@ -379,6 +381,20 @@ class RSTPlanRepo:
         self._template_dir = template_dir
         self._output_dir = output_dir
 
+    def skeleton(self):
+        bones = (
+            "Makefile",
+            "conf.py",
+            "index.rst",
+            "tickets.rst",
+            "milestones.rst"
+        )
+        for bone in bones:
+            src = f"{self._template_dir}/skeleton/{bone}"
+            snk = f"{self._output_dir}/{bone}"
+            if not self._file_exists(snk):
+                self._file_copy(src, snk)
+
     def milestone_report(self, counter, milestone):
         template = Template(
             open(
@@ -402,7 +418,7 @@ class RSTPlanRepo:
                 "r"
             ).read()
         )
-        path = f"{self._output_dir}/tickets/FIXME-REPO-ID/{issue.slug_id}.rst"
+        path = f"{self._output_dir}/tickets/FIXME-REPO-ID_{issue.slug_id}.rst"
         # FIXME: write to file
         self._write_file(
             path,
@@ -416,3 +432,14 @@ class RSTPlanRepo:
         fp = open(path, "w")
         fp.write(text)
         fp.close()
+
+    def _file_exists(self, path):
+        if os.path.exists(path) and os.path.isfile(path):
+            return True
+        return False
+
+    def _file_copy(self, from_path, to_path):
+        if not self._file_exists(from_path):
+            raise Exception(f"file does not exist: {from_path}")
+        os.makedirs(os.path.dirname(to_path), exist_ok=True)
+        shutil.copy2(from_path, to_path)

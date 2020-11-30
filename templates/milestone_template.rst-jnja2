@@ -1,4 +1,5 @@
 .. milestone_{{ milestone.milestone_id }} <-- make named anchor
+
 Milestone: {{milestone.title}}
 ==========={% for x in milestone.title %}={% endfor %}
 
@@ -11,4 +12,3 @@ with associated goals, epics or tickets scheduled.
 
 {{ o }}
 {% endfor %}
-
