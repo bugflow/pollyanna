@@ -62,10 +62,11 @@ virtualenv -p python3.8 .venv
 . .venv/bin/activate
 pip install -r requirements.txt
 ./post_pip_install.sh  # because we want bleeding edge of gql
+cp local_settings.py.sample local_settings.py
 pytest
 ```
 
-The last thing you shouls see should look something like that:
+The last thing you should see is something like this:
 ```
 =================================== test session starts ====================================
 platform linux -- Python 3.8.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
@@ -79,23 +80,28 @@ test_utils.py .                                                                 
 
 ==================================== 11 passed in 0.14s ====================================
 ```
-But hopefully with more tests being run :)
+But hopefully with more tests :)
 
 Then copy `local_settings.py.sample` to `local_settings.py` and edit it.
+It only needs to exist for the tests to run,
+but you need to configure it for your project to get a sensible output.
 
 Then do `python run.py` or, if you are lucky just `run.py` should work for you.
 
 ## How it (is going to) works
 
 run.py instantiates a `usecases.GenerateThePlan` instance,
-after it instanting it with some handy repos.
+feeding it some handy "repository" instances.
+These are repositories in the Clean Architecture sense of the word,
+not Git Repositories.
 
-When it runs, the `repositories.ZenHubRestRepo` and `repositories.GitHubGraphQPRepo` instances
+When `run.py` does it's thing,
+the `repositories.ZenHubRestRepo`
+and `repositories.GitHubGraphQPRepo` instances
 talk to the online services and get the domain objects we need.
 These repos use a `repositories.FSCache` class (File System Cache)
 to avoid hammering the backing services.
 
-When executed, the usecase calls the GitHub and ZenHub repos
 to form a linked-up object graph of domain objects.
 This graph is passed to a `repositories.RSTPlanRepo` instance,
 which uses jinja2 templates to create
