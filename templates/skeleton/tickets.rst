@@ -1,0 +1,7 @@
+Tickets
+=======
+
+.. toctree::
+   :glob:
+
+   tickets/*

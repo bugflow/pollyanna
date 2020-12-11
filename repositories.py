@@ -15,7 +15,9 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from jinja2 import Template
 import json
+import os
 import os.path
+import shutil
 import requests
 from requests.structures import CaseInsensitiveDict
 
@@ -107,6 +109,10 @@ class FSCache:
 
 
 class ZenHubRestRepo:
+    @property
+    def epics(self):
+        return self._epics
+
     def __init__(
             self,
             repo_id=None,
@@ -377,14 +383,6 @@ class GHGraphQLRepo:
             self._epics.append(epic)
     
     def _process_issue(self, i):
-        num = i["number"]
-        pub_at = i["publishedAt"]
-        title = i["title"]
-        state = i["state"]
-
-        m_data =  i["milestone"]
-        milestone = self._process_milestone(m_data)
-
         labels = []
         for l_data in i["labels"]["nodes"]:
             labels.append(self._process_label(l_data))
@@ -392,19 +390,19 @@ class GHGraphQLRepo:
         # ensure this issue is in the graph
         found = False
         for issue in self._issues:
-            if issue.issue_number == num:
+            if issue.issue_id == i["id"]:
                 found = issue
         if not found:
             issue = Issue(
-                issue_number=num,
-                published_at=pub_at,
-                title=title,
-                state=state,
-                milestone=milestone,
+                issue_id=i["id"],
+                issue_number=i["number"],
+                published_at=i["publishedAt"],
+                title=i["title"],
+                state=i["state"],
+                milestone=self._process_milestone(i["milestone"]),
                 labels=labels)
             self._issues.append(issue)
             found = issue
-
         # ensure this issue has it's labels
         for label in labels:
             if label not in found.labels:
@@ -449,6 +447,10 @@ class GHGraphQLRepo:
     def milestones(self):
         return self._milestones
 
+    @property
+    def issues(self):
+        return self._issues
+
     def _get_raw_data(self):
         # TODO: make graphql query
         # TODO: iterate/combine over pagenated results
@@ -467,23 +469,71 @@ class RSTPlanRepo:
         template_dir=None,
         output_dir=None
     ):
+        # TODO: decide how to handle null config
+        # strong types? error if None? ?? 
         self._template_dir = template_dir
         self._output_dir = output_dir
 
-    def milestone_report(self, milestone):
+    def skeleton(self):
+        bones = (
+            "Makefile",
+            "conf.py",
+            "index.rst",
+            "tickets.rst",
+            "milestones.rst",
+            "demo.rst"
+        )
+        for bone in bones:
+            src = f"{self._template_dir}/skeleton/{bone}"
+            snk = f"{self._output_dir}/{bone}"
+            if not self._file_exists(snk):
+                self._file_copy(src, snk)
+
+    def milestone_report(self, counter, milestone):
         template = Template(
             open(
-                "templates/milestone_template.rst-jnja2",
+                f"{self._template_dir}/milestone_template.rst-jnja2",
                 "r"
             ).read()
         )
-        print(
+        path = f"{self._output_dir}/milestones/{counter}_{milestone.slug_id}.rst"
+        # FIXME: write to file
+        self._write_file(
+            path,
             template.render(
                 milestone=milestone
             )
         )
-        #print(milestone.milestone_id)
-        #print(milestone.title)
-        #print(milestone.objectives)
-        #print(milestone.issues)
 
+    def ticket_report(self, issue):
+        template = Template(
+            open(
+                f"{self._template_dir}/ticket_template.rst-jnja2",
+                "r"
+            ).read()
+        )
+        path = f"{self._output_dir}/tickets/FIXME-REPO-ID_{issue.slug_id}.rst"
+        # FIXME: write to file
+        self._write_file(
+            path,
+            template.render(
+                ticket=issue
+            )
+        )
+
+    def _write_file(self, path, text):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        fp = open(path, "w")
+        fp.write(text)
+        fp.close()
+
+    def _file_exists(self, path):
+        if os.path.exists(path) and os.path.isfile(path):
+            return True
+        return False
+
+    def _file_copy(self, from_path, to_path):
+        if not self._file_exists(from_path):
+            raise Exception(f"file does not exist: {from_path}")
+        os.makedirs(os.path.dirname(to_path), exist_ok=True)
+        shutil.copy2(from_path, to_path)

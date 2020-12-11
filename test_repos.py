@@ -1,6 +1,7 @@
 from repositories import ZenHubRestRepo
 from pytest_mock import MockerFixture
-import run  # a KLUDGE
+import run  # KLUDGE. A bad one
+# FIXME - should be able to run the test suite without a local_settings.py
 
 
 def test_zhrr_int(mocker: MockerFixture) -> None:

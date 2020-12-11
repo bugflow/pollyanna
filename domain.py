@@ -2,6 +2,7 @@
 """
 Generate the current project plan (in RST) from GitHub tickets.
 """
+from slugify import slugify
 import re
 
 
@@ -22,6 +23,10 @@ class Milestone:
     @property
     def count_objectives(self):
         return len(self.objective_goals)
+
+    @property
+    def slug_id(self):
+        return slugify(self.milestone_id)
 
 
 class Label:
@@ -46,12 +51,37 @@ class Issue:
         goal=None
     ):
         self.issue_id = issue_id
+        if not self.issue_id:  # DEBUG
+            raise Exception  # DEBUG
         self.issue_number = issue_number
         self.title = title
         self.state = state
         self.milestone = milestone
         self.labels = labels
         self._goal = goal
+
+    @property
+    def code(self):
+        return f"T_{self.issue_id}"
+
+    @property
+    def status(self):
+        # FIXME - open or closed please
+        return "Open"
+
+    @property
+    def taglist(self):
+        # FIXME return semi-colon separated list of labels
+        return "foo;bar"
+
+    @property
+    def desctipnion(self):
+        # FIXME return the content of the ticket description
+        return "blah blah blah"
+
+    @property
+    def slug_id(self):
+        return slugify(f"{self.issue_number}")
 
     @property
     def is_goal(self):
