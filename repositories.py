@@ -28,6 +28,8 @@ class FSCache:
         return self._dir_exists(self._repo_path(reponame))
 
     def issue_exists(self, reponame, issue_number):
+        if type(reponame) != type("repo names should be strings"):
+            raise Exception(f"{reponame} is not a string (repo names should be strings)")
         if not self.repo_exists(reponame):
             return False
         issue_path = self._issue_path(reponame, issue_number)
@@ -46,6 +48,8 @@ class FSCache:
         return False
 
     def _repo_path(self, reponame):
+        if type(reponame) == type(1):
+            raise Exception(f"{reponame} is of type int, not a string")
         prefix = os.path.join(self._cache_dir, 'repositories')
         return os.path.join(prefix, reponame)
 
@@ -111,7 +115,7 @@ class ZenHubRestRepo:
     ):
         self._cache = FSCache(cache_dir=".pollyanna_cache")  # TODO: configurable
         # config values
-        self._repo_id = repo_id
+        self._repo_id = str(repo_id)
         self._api_token = api_token
         self._cache_dir = cache_dir
         self._CACHE_THRESHOLD = 600  # seconds
@@ -209,7 +213,7 @@ class ZenHubRestRepo:
             return None
         if not repo_name:
             return None
-        if not self._cache._issue_exists(repo_name, issue_number):
+        if not self._cache.issue_exists(repo_name, issue_number):
             return None
         # TODO: refactor to use FSCache.issue_stale(repo_name, issue_number)
         # we probably don't need this method at all
