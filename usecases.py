@@ -32,7 +32,7 @@ class GenerateThePlanUseCase:
         # TODO: sort milestones by chronolical order
         milestones = self._github_repo.milestones
 
-        for e in epics:
+        for e in epics.values():
             e.gh_issues = []
             for issue_num in e.issues:
                 for i in issues:
