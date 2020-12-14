@@ -128,5 +128,9 @@ class ZenHubPipeLine:
 
 
 class ZenHubEpic:
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, issues, total_epic_estimate, pipelines, issue_number, repo_id):
+        self.issues=issues,
+        self.total_epic_estimate=total_epic_estimate,
+        self.pipelines=pipelines,
+        self.issue_number=issue_number,
+        self.repo_id=repo_id

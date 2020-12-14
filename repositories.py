@@ -111,7 +111,7 @@ class FSCache:
 class ZenHubRestRepo:
     @property
     def epics(self):
-        return self._epics
+        return self._epics[int(self._repo_id)]
 
     def __init__(
             self,
@@ -475,19 +475,7 @@ class RSTPlanRepo:
         self._output_dir = output_dir
 
     def skeleton(self):
-        bones = (
-            "Makefile",
-            "conf.py",
-            "index.rst",
-            "tickets.rst",
-            "milestones.rst",
-            "demo.rst"
-        )
-        for bone in bones:
-            src = f"{self._template_dir}/skeleton/{bone}"
-            snk = f"{self._output_dir}/{bone}"
-            if not self._file_exists(snk):
-                self._file_copy(src, snk)
+        shutil.copytree(f"{self._template_dir}/skeleton", f"{self._output_dir}", dirs_exist_ok=True)
 
     def milestone_report(self, counter, milestone):
         template = Template(
@@ -526,14 +514,3 @@ class RSTPlanRepo:
         fp = open(path, "w")
         fp.write(text)
         fp.close()
-
-    def _file_exists(self, path):
-        if os.path.exists(path) and os.path.isfile(path):
-            return True
-        return False
-
-    def _file_copy(self, from_path, to_path):
-        if not self._file_exists(from_path):
-            raise Exception(f"file does not exist: {from_path}")
-        os.makedirs(os.path.dirname(to_path), exist_ok=True)
-        shutil.copy2(from_path, to_path)
