@@ -6,5 +6,6 @@ FIXME: Use project name
    :caption: Contents:
 
    demo
+   goals
    milestones
-   tickets
+   appendix

@@ -11,3 +11,19 @@
 
    {{ticket.description}}
 
+TODO:
+
+* better internal (document) id: short code
+* include tags for every github label
+* status information (for each board in the ZenHub workspace)
+* include body copy
+* x-ref goal, objective
+* x-ref dependancies (depends on, blocks)
+* chronological history of things that happened on this ticket (github conversation, etc)
+
+This page should be different depending what type of ticket it is.
+
+* if a super-epic (goal?)
+* if an epic with no sub-epics
+* if not an epic, and not part of an epic
+* if not an epic, and part of an epic
