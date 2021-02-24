@@ -1,7 +1,7 @@
 .. milestone_{{ milestone.milestone_id }} <-- make named anchor
 
-Milestone: {{milestone.title}}
-==========={% for x in milestone.title %}={% endfor %}
+{{milestone.title}}
+{% for x in milestone.title %}={% endfor %}
 
 This milestone has {{ milestone.count_objectives }} objectives
 with associated goals, epics or tickets scheduled.
@@ -12,3 +12,9 @@ with associated goals, epics or tickets scheduled.
 
 {{ o }}
 {% endfor %}
+
+TODO:
+  - dates and description (from GitHub)
+  - x-ref to previous and next milestone
+  - gant chart (showing dependencies)
+  - table of tickets (type, status) in this milestone
